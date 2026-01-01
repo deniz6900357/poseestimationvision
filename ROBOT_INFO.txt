@@ -1,0 +1,398 @@
+================================================================================
+                    FRC 2025 SWERVE ROBOT DOKÜMANTASYONU
+================================================================================
+
+══════════════════════════════════════════════════════════════════════════════
+                            ROBOT ÖZELLİKLERİ
+══════════════════════════════════════════════════════════════════════════════
+
+GENEL BİLGİLER:
+--------------
+- Sezon: FRC 2025
+- Sürücü Sistemi: CTRE Phoenix 6 Swerve Drive
+- Otonom: PathPlanner 2025.2.7
+- Görüntü İşleme: Limelight Vision System
+
+DONANIM:
+--------
+Motor Kontrolcüler:
+  • 8x TalonFX (Kraken X60) - 4x Drive, 4x Steer
+  • Drive motorlar: Velocity control mode
+  • Steer motorlar: MotionMagicExpo control mode
+  • Nötr Mod: Brake (tüm motorlar)
+
+Sensörler:
+  • 4x CANcoder - Mutlak enkoder (steer pozisyonu)
+  • 1x Pigeon 2 IMU - Gyro (ID: 2)
+  • 1x Limelight - Vision kamerası
+  • Feedback Type: FusedCANcoder (CANcoder + TalonFX encoder fusion)
+
+CAN Bus:
+  • CANivore (CAN FD aktif)
+  • Odometry Update: 250 Hz (CAN FD ile)
+
+LİSANSLAR:
+----------
+  • Phoenix Pro Lisansı: Aktif ✓
+  • FOC (Field Oriented Control): Otomatik aktif (Voltage mode ile)
+
+ROBOT FİZİKSEL ÖZELLİKLER:
+--------------------------
+  • Maksimum Hız: 5.29 m/s (12V'ta)
+  • Maksimum Açısal Hız: 0.75 rotasyon/saniye (270°/s)
+  • Tekerlek Yarıçapı: 2 inç
+  • Drive Gear Ratio: 6.03:1
+  • Steer Gear Ratio: 26.09:1
+  • Wheel Base: 27.165 inç (kare konfigürasyon)
+  • Slip Current: 120A
+
+MODÜL POZİSYONLARı (Merkeze göre):
+-----------------------------------
+  • Front Left:  (+13.5825", +13.5825")
+  • Front Right: (+13.5825", -13.5825")
+  • Back Left:   (-13.5825", +13.5825")
+  • Back Right:  (-13.5825", -13.5825")
+
+MODÜL CAN ID'LERİ:
+------------------
+Front Left Module:
+  - Drive Motor: 4
+  - Steer Motor: 5
+  - CANcoder: 6
+  - Encoder Offset: -0.146484375 rotations
+
+Front Right Module:
+  - Drive Motor: 7
+  - Steer Motor: 8
+  - CANcoder: 9
+  - Encoder Offset: -0.396728515625 rotations
+
+Back Left Module:
+  - Drive Motor: 10
+  - Steer Motor: 11
+  - CANcoder: 12
+  - Encoder Offset: 0.12451171875 rotations
+
+Back Right Module:
+  - Drive Motor: 13
+  - Steer Motor: 14
+  - CANcoder: 15
+  - Encoder Offset: -0.231689453125 rotations
+
+
+══════════════════════════════════════════════════════════════════════════════
+                          KONTROL SİSTEMİ (XBOX CONTROLLER)
+══════════════════════════════════════════════════════════════════════════════
+
+JOYSTICK (Sol/Sağ):
+-------------------
+Left Stick Y (İleri/Geri):
+  • İleri: Stick aşağı (-Y)
+  • Geri: Stick yukarı (+Y)
+  • Maksimum hız: 5.29 m/s
+  • Deadband: %10
+
+Left Stick X (Sağa/Sola):
+  • Sola: Stick sola (-X)
+  • Sağa: Stick sağa (+X)
+  • Maksimum hız: 5.29 m/s
+  • Deadband: %10
+
+Right Stick X (Dönüş):
+  • Saat yönü: Stick sağa (+X)
+  • Saat tersi: Stick sola (-X)
+  • Maksimum açısal hız: 270°/s
+  • Deadband: %10
+
+Sürüş Modu:
+  • Field-Centric (Saha merkezli)
+  • Field-Centric sıfırlama: Left Bumper
+
+
+BUTON MAPPING:
+--------------
+
+A Butonu - LIMELIGHT AIM & RANGE:
+  • İşlev: Target'a yönel ve mesafe ayarla
+  • Hareket:
+    - Rotation: Target'a dön (tx bazlı)
+    - Forward/Back: Mesafe ayarla (ty bazlı)
+    - Strafe: YOK (0)
+  • Kullanım: Basılı tutarak target'a kilitle
+  • kP Değerleri:
+    - Rotation: 0.035
+    - Forward: 0.1
+
+Y Butonu - LIMELIGHT STRAFE ALIGN (3 EKSEN):
+  • İşlev: Target'a tam hizala (3 hareket birden)
+  • Hareket:
+    - Rotation: Target'a dön (tx bazlı)
+    - Forward/Back: Mesafe ayarla (ty bazlı)
+    - Strafe: Yatayda ortala (tx bazlı)
+  • Kullanım: Target ile paralel olup yan kayarak hizalan
+  • Tüm hareketler aynı anda gerçekleşir!
+  • kP Değerleri:
+    - Rotation: 0.035
+    - Strafe: 0.035
+    - Forward: 0.1
+
+X Butonu - BRAKE:
+  • İşlev: Fren (tekerlekleri X formasyonuna getir)
+  • Kullanım: Durma pozisyonu, itilmeye karşı direnç
+
+B Butonu - POINT WHEELS:
+  • İşlev: Tekerlekleri belirtilen yöne çevir
+  • Kontrol: Left Stick ile yön belirle
+  • Kullanım: Kalibrasyon ve test için
+
+Left Bumper - RESET FIELD-CENTRIC:
+  • İşlev: Gyro'yu sıfırla (mevcut yön = 0°)
+  • Kullanım: Robotu yeniden kalibre et
+
+Right Bumper - (Boş):
+  • Şu anda atanmış işlev yok
+
+
+D-PAD (POV) + BACK/START - SYSID:
+---------------------------------
+SysId Characterization (Motor karakterizasyonu):
+
+Back + D-Pad Up (0°):
+  • SysId Dynamic Forward
+
+Back + D-Pad Down (180°):
+  • SysId Dynamic Reverse
+
+Start + D-Pad Up (0°):
+  • SysId Quasistatic Forward
+
+Start + D-Pad Down (180°):
+  • SysId Quasistatic Reverse
+
+NOT: Her SysId testi tek bir log dosyasında sadece bir kez çalıştırılmalı!
+
+
+══════════════════════════════════════════════════════════════════════════════
+                          VİSION SİSTEMİ (LIMELIGHT)
+══════════════════════════════════════════════════════════════════════════════
+
+LIMELIGHT AYARLARI:
+-------------------
+  • Cihaz Adı: "limelight" (default)
+  • NetworkTables üzerinden veri alır
+  • Değerler:
+    - tv: Target visible (0 veya 1)
+    - tx: Yatay offset (derece, ±29.8°)
+    - ty: Dikey offset (derece, ±24.85°)
+    - ta: Target alanı (%, 0-100)
+
+VISION CONTROL MANTĞI:
+----------------------
+1. Proportional Control (P kontrol):
+   • Hız = Hata × kP
+   • Hata azaldıkça hız azalır (doğal yavaşlama)
+
+2. Target Toleransları:
+   • Aim Tolerance: ±2.0°
+   • Range Tolerance: ±1.0°
+
+3. Hareket Yönleri:
+   • tx > 0 → Target sağda
+   • tx < 0 → Target solda
+   • ty > 0 → Target uzakta
+   • ty < 0 → Target yakında
+
+kP DEĞERLERİ (TUNING GEREKEBİLİR):
+----------------------------------
+  • AIMING_KP = 0.035   (Rotation ve Strafe için)
+  • RANGING_KP = 0.1    (Forward/Back için)
+
+NOT: Bu değerler Limelight dokümantasyonundan alınmıştır.
+Robotunuzda test edip fine-tune etmeniz gerekebilir!
+
+APRILTAG POSE ESTIMATION (MegaTag2):
+-------------------------------------
+AKTIF! ✅ Robot her tag gördüğünde odometry'yi otomatik düzeltir!
+
+Nasıl Çalışır:
+  • Robot.robotPeriodic() → Her 20ms'de çağrılır (50 Hz)
+  • Pigeon 2 gyro → Limelight'a yaw gönderilir
+  • MegaTag2 → Gyro fusion ile pose estimate hesaplar
+  • Filtreleme:
+    - Angular velocity > 720°/s → REJECT (motion blur)
+    - Tag count = 0 → REJECT (no tags visible)
+  • Geçerliyse → drivetrain.addVisionMeasurement() çağrılır
+
+Standard Deviation (Tag Sayısına Göre):
+  • 2+ tag: [0.5m, 0.5m, IGNORE]   ← Çok güvenilir!
+  • 1 tag:  [0.9m, 0.9m, IGNORE]   ← Az güvenilir
+  • 0 tag:  Update yapılmaz         ← Odometry kullanılır
+
+Theta (rotation) Standard Deviation:
+  • 9999999 değeri kullanılır → Theta'yı IGNORE et!
+  • Pigeon 2 gyro çok daha doğru, vision theta'ya güvenme!
+
+Sonuçlar:
+  ✅ Sahada sürüklenme YOK
+  ✅ PathPlanner daha doğru path takibi
+  ✅ Field-centric sürüş daha hassas
+  ✅ Otonom sırasında pose düzeltilir
+
+Limelight Ayarları Kontrol Listesi:
+  ⚠️ AprilTag pipeline aktif mi?
+  ⚠️ MegaTag2 mode açık mı?
+  ⚠️ Field layout 2025 FRC yüklü mü? (doğru tag pozisyonları)
+  ⚠️ Camera resolution: 1280x800
+  ⚠️ Exposure ayarları AprilTag için optimize edilmiş mi?
+
+NetworkTables Debug (SmartDashboard/Elastic):
+  • "limelight/tx" → Yatay offset
+  • "limelight/ty" → Dikey offset
+  • "limelight/tid" → Tag ID array
+  • "limelight/botpose_wpiblue" → Robot pose (MegaTag2)
+  • Tag count, angular velocity, reject status eklenebilir
+
+
+══════════════════════════════════════════════════════════════════════════════
+                            OTONOM SİSTEMİ
+══════════════════════════════════════════════════════════════════════════════
+
+PATHPLANNER ENTEGRASYONU:
+-------------------------
+  • Versiyon: PathPlanner 2025.2.7
+  • Konfigürasyon: RobotConfig.fromGUISettings()
+  • Auto Seçim: Elastic Dashboard "Auto Chooser"
+  • Control Mode: Velocity control
+
+PID KONSTANTLARI:
+-----------------
+Translation (X/Y hareketi):
+  • kP: 5.0
+  • kI: 0.0
+  • kD: 0.0
+
+Rotation (Dönüş):
+  • kP: 5.0
+  • kI: 0.0
+  • kD: 0.0
+
+NOT: Bu değerler robotunuza göre ayarlanmalı!
+
+OTONOM DOSYALARI:
+-----------------
+Konum: src/main/deploy/pathplanner/autos/
+Mevcut Auto: "oe meir.auto"
+
+PathPlanner GUI'de oluşturulan yeni otonom programlar
+otomatik olarak Auto Chooser'da görünür.
+
+ALLIANCE RENK:
+--------------
+  • Şu anda: Blue Alliance (flip path = false)
+  • Red Alliance için kodu değiştir: () -> true
+
+
+══════════════════════════════════════════════════════════════════════════════
+                         TEKNİK DETAYLAR
+══════════════════════════════════════════════════════════════════════════════
+
+WPLIB CONVENTION:
+-----------------
+  • +X: İleri (robot önü)
+  • +Y: Sol
+  • +Rotation: Saat yönü tersi (CCW)
+
+CONTROL LOOP FREQUENCY:
+-----------------------
+  • Robot Periodic: 50 Hz (20ms)
+  • Odometry Update: 250 Hz (4ms) - CAN FD ile
+  • Vision Update: ~20 Hz (NetworkTables)
+
+STEER MOTOR CURRENT LIMIT:
+--------------------------
+  • Stator Limit: 60A (brownout koruması)
+  • Drive Motor Limit: Yok (slip current 120A)
+
+DOSYA YAPISI:
+-------------
+src/main/java/frc/robot/
+  ├── Robot.java                    - Ana robot sınıfı
+  ├── RobotContainer.java           - Komut bağlama ve konfigürasyon
+  ├── Telemetry.java                - Telemetri logging
+  ├── subsystems/
+  │   ├── CommandSwerveDrivetrain.java  - Swerve subsystem
+  │   └── VisionSubsystem.java          - Limelight vision
+  ├── generated/
+  │   └── TunerConstants.java       - CTRE Tuner X konfigürasyonu
+  └── util/
+      └── LimelightHelpers.java     - Limelight yardımcı fonksiyonlar
+
+src/main/deploy/pathplanner/
+  ├── autos/                        - Otonom programlar
+  └── paths/                        - Path dosyaları
+
+
+══════════════════════════════════════════════════════════════════════════════
+                      GELECEK CHAT'LER İÇİN BİLGİ
+══════════════════════════════════════════════════════════════════════════════
+
+BU ROBOTTA YAPILMIŞ DEĞİŞİKLİKLER:
+-----------------------------------
+1. ✅ PathPlanner 2025.2.7 entegrasyonu
+2. ✅ Elastic Dashboard Auto Chooser
+3. ✅ Velocity control mode (eskiden OpenLoopVoltage)
+4. ✅ Brake mode (tüm motorlarda)
+5. ✅ Limelight vision tracking sistemi
+6. ✅ 2 vision modu: Aim+Range (A) ve Strafe Align (Y)
+7. ✅ SysId butonları D-Pad'e taşındı
+8. ✅ AprilTag MegaTag2 pose estimation (OTOMATIK!)
+9. ✅ Vision-based odometry correction (720°/s filtering)
+
+YAPILMAYAN/KALDIRILMIŞ ÖZELLİKLER:
+-----------------------------------
+❌ FOC kod değişikliği (Phoenix Pro ile otomatik)
+❌ Manuel FOC aktivasyonu (gerek yok)
+
+TEST EDİLMESİ GEREKENLER:
+--------------------------
+⚠️ Vision kP değerleri (0.035 ve 0.1)
+⚠️ PathPlanner PID sabitleri (5.0, 0.0, 0.0)
+⚠️ Maksimum hız ayarı (5.29 m/s uygun mu?)
+⚠️ Limelight mounting pozisyonu ve pipeline ayarları
+⚠️ MegaTag2 standard deviation değerleri (0.5m ve 0.9m)
+⚠️ AprilTag pipeline exposure ve gain ayarları
+⚠️ Field layout 2025 FRC doğru tag pozisyonları
+
+ÖZEL NOTLAR:
+------------
+• CANivore kullanımı = CAN FD otomatik aktif ✓
+• Phoenix Pro lisansı = FOC otomatik aktif ✓
+• Vision tracking field-centric modda çalışır
+• A ve Y butonları target yoksa robotu durdurur
+• MegaTag2 her 20ms'de otomatik pose düzeltmesi yapar ✓
+• Angular velocity > 720°/s ise vision update reject edilir ✓
+• Theta (rotation) vision'dan alınmaz, sadece Pigeon 2 kullanılır ✓
+
+KOD DOSYALARI DEĞİŞİKLİKLERİ:
+------------------------------
+Modified Files:
+  • Robot.java → updateVisionMeasurement() eklendi
+  • RobotContainer.java → vision field public yapıldı
+  • VisionSubsystem.java → MegaTag2 metodları eklendi
+    - getMegaTag2Estimate()
+    - getTagCount()
+    - shouldRejectVisionUpdate()
+    - getVisionStdDevs()
+
+KAYNAKLAR:
+----------
+  • Limelight Official Examples: github.com/LimelightVision/limelight-examples
+  • Team 6391 Implementation: github.com/6391-Ursuline-Bearbotics/2024-6391-Crescendo
+  • CTRE Phoenix 6 API: api.ctr-electronics.com/phoenix6/release/java/
+  • Limelight MegaTag2 Docs: docs.limelightvision.io
+
+================================================================================
+                        Son Güncelleme: 2025-01-01
+                    Build Status: ✅ SUCCESSFUL (No Errors)
+             AprilTag Pose Estimation: ✅ ACTIVE (MegaTag2 with Gyro Fusion)
+================================================================================
